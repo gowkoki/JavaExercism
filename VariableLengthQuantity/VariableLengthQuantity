@@ -1,0 +1,57 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class VariableLengthQuantity {
+    
+    List<String> encode(List<Long> numbers) {
+    List<String> encoded = new ArrayList<>();
+
+    for (Long number : numbers) {
+        if (number < 0 || number > 0xFFFFFFFFL) {
+            throw new IllegalArgumentException("Number out of range for 32-bit unsigned int.");
+        }
+
+        List<Long> temp = new ArrayList<>();
+        do {
+            temp.add(0, number & 0x7F);
+            number >>= 7;
+        } while (number > 0);
+
+        for (int i = 0; i < temp.size() - 1; i++) {
+            temp.set(i, temp.get(i) | 0x80); 
+        }
+
+        for (Long b : temp) {
+            encoded.add(String.format("0x%x", b)); 
+        }
+    }
+
+    return encoded;
+}
+
+    
+    List<String> decode(List<Long> bytes) {
+    List<String> decoded = new ArrayList<>();
+    long current = 0;
+
+    for (Long b : bytes) {
+        if (b < 0 || b > 0xFF) {
+            throw new IllegalArgumentException("Byte out of range: " + b);
+        }
+
+        current = (current << 7) | (b & 0x7F);
+
+        if ((b & 0x80) == 0) {
+            decoded.add(String.format("0x%x", current));
+            current = 0;
+        }
+    }
+
+    if (!bytes.isEmpty() && (bytes.get(bytes.size() - 1) & 0x80) != 0) {
+        throw new IllegalArgumentException("Invalid variable-length quantity encoding");
+    }
+
+    return decoded;
+}
+
+}
