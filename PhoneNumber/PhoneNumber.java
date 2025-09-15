@@ -4,21 +4,18 @@ class PhoneNumber {
     PhoneNumber(String numberString) {
         StringBuilder result = new StringBuilder();
 
-        // Collect digits, throw error if letters found
         for (char c : numberString.toCharArray()) {
             if (Character.isLetter(c)) {
                 throw new IllegalArgumentException("letters not permitted");
             } else if (Character.isDigit(c)) {
                 result.append(c);
             } else if (!Character.isWhitespace(c) && "()-.+".indexOf(c) == -1) {
-                // allowed punctuation: space, (), -, ., +
                 throw new IllegalArgumentException("punctuations not permitted");
             }
         }
 
         String digits = result.toString();
 
-        // Length checks
         if (digits.length() < 10) {
             throw new IllegalArgumentException("must not be fewer than 10 digits");
         } else if (digits.length() > 11) {
@@ -31,7 +28,6 @@ class PhoneNumber {
             }
         }
 
-        // NANP rules
         if (digits.charAt(0) == '0') {
             throw new IllegalArgumentException("area code cannot start with zero");
         }
